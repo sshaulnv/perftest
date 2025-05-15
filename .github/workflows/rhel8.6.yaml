@@ -1,0 +1,46 @@
+name: Build and Test perftest on RHEL 8.6
+
+on:
+  push:
+    branches:
+      - master
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  build:
+    runs-on: rhel-8.6
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo dnf update -y
+          sudo dnf install -y \
+            gcc \
+            gcc-c++ \
+            make \
+            autoconf \
+            automake \
+            libtool \
+            pkgconfig \
+            rdma-core-devel \
+            libibverbs-devel \
+            librdmacm-devel \
+            libibumad-devel \
+            pciutils-devel
+
+      - name: Run autogen.sh
+        run: ./autogen.sh
+
+      - name: Configure the build
+        run: ./configure
+
+      - name: Build perftest
+        run: make
+    
+      - name: Install perftest
+        run: sudo make install 
