@@ -1,4 +1,4 @@
-name: Build and Test perftest on Ubuntu 22.04 with CUDA 11.3
+name: Build and Test perftest on Ubuntu 22.04 with CUDA 11.7
 
 on:
   push:
@@ -20,9 +20,8 @@ jobs:
         run: |
           wget https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/cuda-ubuntu2204.pin
           sudo mv cuda-ubuntu2204.pin /etc/apt/preferences.d/cuda-repository-pin-600
-          wget https://developer.download.nvidia.com/compute/cuda/11.3.1/local_installers/cuda-repo-ubuntu2204-11-3-local_11.3.1-465.19.01-1_amd64.deb
-          sudo dpkg -i cuda-repo-ubuntu2204-11-3-local_11.3.1-465.19.01-1_amd64.deb
-          sudo cp /var/cuda-repo-ubuntu2204-11-3-local/cuda-*-keyring.gpg /usr/share/keyrings/
+          sudo apt-key adv --fetch-keys https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/3bf863cc.pub
+          sudo add-apt-repository "deb https://developer.download.nvidia.com/compute/cuda/repos/ubuntu2204/x86_64/ /"
 
       - name: Install dependencies
         run: |
@@ -37,13 +36,12 @@ jobs:
             librdmacm-dev \
             libibumad-dev \
             libpci-dev \
-            cuda-toolkit-11-3 \
-            cuda-drivers
+            cuda
 
       - name: Set up CUDA environment
         run: |
-          echo 'export PATH=/usr/local/cuda-11.3/bin:${PATH}' >> $GITHUB_ENV
-          echo 'export LD_LIBRARY_PATH=/usr/local/cuda-11.3/lib64:${LD_LIBRARY_PATH}' >> $GITHUB_ENV
+          echo 'export PATH=/usr/local/cuda-11.7/bin:${PATH}' >> $GITHUB_ENV
+          echo 'export LD_LIBRARY_PATH=/usr/local/cuda-11.7/lib64:${LD_LIBRARY_PATH}' >> $GITHUB_ENV
 
       - name: Run autogen.sh
         run: ./autogen.sh
